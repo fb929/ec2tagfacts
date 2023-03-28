@@ -135,7 +135,7 @@ class ec2tagfacts (
     ini_setting { 'aws_access_key_id setting':
       ensure  => present,
       path    => $aws_cli_ini_settings,
-      section => 'default',
+      section => 'ec2tagfacts',
       setting => 'aws_access_key_id',
       value   => $aws_access_key_id,
       require => File[$directory],
@@ -143,7 +143,7 @@ class ec2tagfacts (
     ini_setting { 'aws_secret_access_key setting':
       ensure  => present,
       path    => $aws_cli_ini_settings,
-      section => 'default',
+      section => 'ec2tagfacts',
       setting => 'aws_secret_access_key',
       value   => $aws_secret_access_key,
       require => File[$directory],

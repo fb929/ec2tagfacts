@@ -9,10 +9,8 @@
 # Author:
 #   Bryan Andrews (https://bryanandrews.org)
 
-require "net/http"
-require 'json' # hint: yum install ruby-json, or apt-get install ruby-json
-require "uri"
-require "date"
+require "json" # hint: yum install ruby-json, or apt-get install ruby-json
+require "facter"
 
 # if set, file will be appended to with debug data
 #$debug = "/tmp/ec2_tag_facts.log"
@@ -42,15 +40,10 @@ begin
   # Get the AWS EC2 instance ID from http://169.254.169.254/
   #
 
-  uri = URI.parse("http://169.254.169.254")
-  http = Net::HTTP.new(uri.host, uri.port)
-  http.open_timeout = 4
-  http.read_timeout = 4
-  request = Net::HTTP::Get.new("/latest/meta-data/instance-id")
-  response = http.request(request)
-  instance_id = response.body
+  ec2_metadata = Facter.value(:ec2_metadata)
+  instance_id = ec2_metadata['instance-id']
 
-  debug_msg("Instance ID is #{instance_id}")
+  debug_msg("Instance ID is '#{instance_id}'")
 
 rescue
 
@@ -75,11 +68,7 @@ else
   # for example we convert us-west-2b into us-west-2 in order to get the tags.
   #
 
-  request2 = Net::HTTP::Get.new("/latest/meta-data/placement/availability-zone")
-  response2 = http.request(request2)
-  r = response2.body
-
-  region = /.*-.*-[0-9]/.match(r)
+  region = ec2_metadata['placement']['region']
 
   debug_msg("Region is #{region}")
 
@@ -92,11 +81,12 @@ else
 
     # Some edge cases may require multiple attempts to re-run 'aws ec2 describe-tags' due to API rate limits
     # Making up to 6 attempts with sleep time ranging between 4-10 seconds after each unsuccessful attempt
-    for i in 1..6
+    for i in 1..3
       # This is why aws cli is required
-      jsonString = `aws ec2 describe-tags --filters "Name=resource-id,Values=#{instance_id}" --region #{region} --output json`
+      debug_msg("run command = 'aws ec2 --profile ec2tagfacts describe-tags --filters \"Name=resource-id,Values=#{instance_id}\" --region #{region} --output json'")
+      jsonString = `aws ec2 --profile ec2tagfacts describe-tags --filters "Name=resource-id,Values=#{instance_id}" --region #{region} --output json`
       break if jsonString != ''
-      sleep rand(4..10)
+      sleep rand(1..2)
     end
 
     debug_msg("JSON is...\n#{jsonString}")
