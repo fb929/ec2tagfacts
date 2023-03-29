@@ -156,6 +156,16 @@ else
 
   rescue # Ignore if awscli had any issues
 
+    Facter.add(:ec2_tags) do
+      setcode do
+        {}
+      end
+    end
+    Facter.add(:ec2_tag_name) do
+      setcode do
+        'unknown'
+      end
+    end
     debug_msg("awscli exec failed")
 
   end
