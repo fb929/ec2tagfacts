@@ -166,6 +166,11 @@ else
         'unknown'
       end
     end
+    Facter.add(:ec2_tag_role) do
+      setcode do
+        'unknown'
+      end
+    end
     debug_msg("awscli exec failed")
 
   end
