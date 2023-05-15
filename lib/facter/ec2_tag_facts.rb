@@ -143,6 +143,12 @@ else
             end
           end
         end
+        unless result.key?("ec2_tag_name")
+          result["ec2_tag_name"] = "unknown"
+        end
+        unless result.key?("ec2_tag_role")
+          result["ec2_tag_role"] = "unknown"
+        end
 
         debug_msg("Structured fact is: #{result}")
 
@@ -163,12 +169,12 @@ else
     end
     Facter.add(:ec2_tag_name) do
       setcode do
-        'unknown'
+        "unknown"
       end
     end
     Facter.add(:ec2_tag_role) do
       setcode do
-        'unknown'
+        "unknown"
       end
     end
     debug_msg("awscli exec failed")
