@@ -159,6 +159,14 @@ else
             end
           end
         end
+        unless result.key?("ec2_tag_group")
+          result["ec2_tag_group"] = "unknown"
+          Facter.add("ec2_tag_group") do
+            setcode do
+              "unknown"
+            end
+          end
+        end
 
         debug_msg("Structured fact is: #{result}")
 
@@ -183,6 +191,11 @@ else
       end
     end
     Facter.add(:ec2_tag_role) do
+      setcode do
+        "unknown"
+      end
+    end
+    Facter.add(:ec2_tag_group) do
       setcode do
         "unknown"
       end
