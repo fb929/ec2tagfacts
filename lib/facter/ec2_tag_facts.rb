@@ -83,8 +83,8 @@ else
     # Making up to 6 attempts with sleep time ranging between 4-10 seconds after each unsuccessful attempt
     for i in 1..3
       # This is why aws cli is required
-      debug_msg("run command = 'aws ec2 --profile ec2tagfacts describe-tags --filters \"Name=resource-id,Values=#{instance_id}\" --region #{region} --output json'")
-      jsonString = `aws ec2 --profile ec2tagfacts describe-tags --filters "Name=resource-id,Values=#{instance_id}" --region #{region} --output json`
+      debug_msg("run command = 'AWS_SHARED_CREDENTIALS_FILE=/root/.aws/credentials aws ec2 --profile ec2tagfacts describe-tags --filters \"Name=resource-id,Values=#{instance_id}\" --region #{region} --output json'")
+      jsonString = `AWS_SHARED_CREDENTIALS_FILE=/root/.aws/credentials aws ec2 --profile ec2tagfacts describe-tags --filters "Name=resource-id,Values=#{instance_id}" --region #{region} --output json`
       break if jsonString != ''
       sleep rand(1..2)
     end
