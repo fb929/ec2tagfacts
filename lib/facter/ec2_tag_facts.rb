@@ -47,6 +47,20 @@ begin
 
 rescue
 
+  # default tags {{
+  Facter.add(:ec2_tags) do
+    setcode do
+      {}
+    end
+  end
+  for ec2_fact in [ "ec2_tag_name", "ec2_tag_role", "ec2_tag_group" ]
+    Facter.add(:"#{ec2_fact}") do
+      setcode do
+        "unknown"
+      end
+    end
+  end
+  # }}
   debug_msg("This is not an AWS EC2 instance or unable to contact the AWS instance-data web server.")
 
 end
@@ -180,26 +194,21 @@ else
 
   rescue # Ignore if awscli had any issues
 
+    # default tags {{
     Facter.add(:ec2_tags) do
       setcode do
         {}
       end
     end
-    Facter.add(:ec2_tag_name) do
-      setcode do
-        "unknown"
+    for ec2_fact in [ "ec2_tag_name", "ec2_tag_role", "ec2_tag_group" ]
+      Facter.add(:"#{ec2_fact}") do
+        setcode do
+          "unknown"
+        end
       end
     end
-    Facter.add(:ec2_tag_role) do
-      setcode do
-        "unknown"
-      end
-    end
-    Facter.add(:ec2_tag_group) do
-      setcode do
-        "unknown"
-      end
-    end
+    # }}
+
     debug_msg("awscli exec failed")
 
   end
